@@ -6,7 +6,8 @@ book = openpyxl.load_workbook("./myfile.xlsx")
 seating_data = [[]]
 group = 4
 seat = 2
-mix = 1 #0:男女分座 1:男女混座
+mix = 2 #0:男女分座 1:男女混座 2:男女同桌
+rand = True #男女同桌（mix=2）的情况下，是否要按规律分列
 
 def main():
   read()
@@ -29,16 +30,57 @@ def arrange(data):
   if type(data) == dict:
     boys = data.get('boys')
     girls = data.get('girls')
+    if(mix != 1):
+      random.shuffle(boys)
+      random.shuffle(girls)
     if(mix == 0):
       seating_data = permutation([boys, girls])
+    elif(mix == 1):
+      boys_girls = boys + girls
+      random.shuffle(boys_girls)
+      seating_data = permutation([boys_girls])
     else:
-      seating_data = permutation([boys + girls])
+      seating_data = permutation([mixing(boys, girls)])
+
+def mixing(boys:list, girls:list):
+  mix_data = []
+  while(min(len(boys),len(girls))>0):
+    random_gender_order(mix_data, boys, girls)
+  mix_data.extend(girls) if(len(boys)<=len(girls)) else mix_data.extend(boys)
+  '''
+  if(len(boys)<=len(girls)):
+    mix_data.extend(girls)
+  else:
+    mix_data.extend(boys)
+  '''
+  '''
+  if(len(boys)<=len(girls)):
+    while(len(boys)>0):
+      random_gender_order(mix_data, boys, girls)
+    mix_data.extend(girls)
+  else:
+    while (len(girls)>0):
+      random_gender_order(mix_data, boys, girls)
+    mix_data.extend(boys)
+  '''
+  return mix_data
+
+def random_gender_order(mix_data, boys:list, girls:list):
+  if(rand):
+    if(random.randrange(2)==0):
+      mix_data.append(boys.pop(0))
+      mix_data.append(girls.pop(0))
+    else:
+      mix_data.append(girls.pop(0))
+      mix_data.append(boys.pop(0))
+  else:
+    mix_data.append(boys.pop(0))
+    mix_data.append(girls.pop(0))
 
 def permutation(data:list[list]):
   stus = []
   desk = []
   for i in range(0, len(data)):
-    random.shuffle(data[i])
     data[i] = list(filter(None, data[i]))
     data[i] = list(filter(not_empty, data[i]))
     for j in range(0, len(data[i]), seat):
@@ -50,7 +92,7 @@ def permutation(data:list[list]):
       stus.append(list.copy(desk))
       desk.clear()
 
-  random.shuffle(stus)
+  stus.sort(key=lambda s:len(s), reverse=True)
   return stus
 
 def not_empty(s):

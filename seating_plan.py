@@ -2,20 +2,22 @@ import openpyxl
 import random
 import math
 
-book = openpyxl.load_workbook("./myfile.xlsx")
+book = openpyxl.workbook
 seating_data = [[]]
-group = 8
-seat = 1
+group = 4
+seat = 2
 mix = 2 #0:男女分座 1:男女混座 2:男女同桌
 rand = True #男女同桌（mix=2）的情况下，是否要按规律分列
 
 def main():
+  open()
   read()
   write()
   save()
 
-def start():
-  pass
+def open():
+  global book
+  book = openpyxl.load_workbook("./myfile.xlsx")
 
 def read():
   sheet = book['Sheet1']

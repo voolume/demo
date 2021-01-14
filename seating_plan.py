@@ -4,8 +4,8 @@ import math
 
 book = openpyxl.load_workbook("./myfile.xlsx")
 seating_data = [[]]
-group = 4
-seat = 2
+group = 8
+seat = 1
 mix = 2 #0:男女分座 1:男女混座 2:男女同桌
 rand = True #男女同桌（mix=2）的情况下，是否要按规律分列
 
@@ -46,23 +46,11 @@ def mixing(boys:list, girls:list):
   mix_data = []
   while(min(len(boys),len(girls))>0):
     random_gender_order(mix_data, boys, girls)
-  mix_data.extend(girls) if(len(boys)<=len(girls)) else mix_data.extend(boys)
-  '''
   if(len(boys)<=len(girls)):
     mix_data.extend(girls)
   else:
     mix_data.extend(boys)
-  '''
-  '''
-  if(len(boys)<=len(girls)):
-    while(len(boys)>0):
-      random_gender_order(mix_data, boys, girls)
-    mix_data.extend(girls)
-  else:
-    while (len(girls)>0):
-      random_gender_order(mix_data, boys, girls)
-    mix_data.extend(boys)
-  '''
+
   return mix_data
 
 def random_gender_order(mix_data, boys:list, girls:list):
@@ -112,7 +100,7 @@ def write():
   column = group*seat
 
   for i in range(1, rows+1):
-    for j in range(1, column+1, seat):
+    for j in range(1, column+group, seat+1):
       if(len(seating_data)<=0):
         break
       desk = seating_data.pop(0)
